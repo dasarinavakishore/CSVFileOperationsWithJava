@@ -1,0 +1,45 @@
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Set;
+
+public class ReadCSVFile3 {
+	public static void main(String[] args) {
+		ReadCSVFile3 r = new ReadCSVFile3();
+		String inputFile1 = "C:\\Users\\robin\\Documents\\Assessment\\data\\factbook.csv";
+		String inputFile2 = "C:\\Users\\robin\\Documents\\Assessment\\data\\factbook-2.csv";
+		String outputFile = "C:\\Users\\robin\\Documents\\Assessment\\data\\out.csv";
+		String seperator = ";";
+
+		List<String[]> fileList1 = r.readFromCsvFile(seperator, inputFile1);
+		List<String[]> fileList2 = r.readFromCsvFile(seperator, inputFile2);
+
+		Set<String[]> list3 = new LinkedHashSet<String[]>();
+		list3.addAll(fileList1);
+		list3.addAll(fileList2);
+
+		r.writeToCsvFile(list3, seperator, outputFile);
+
+	}
+
+
+	// Allows to define custom separator
+	public List<String[]> readFromCsvFile(String separator, String fileName) {
+		try (BufferedReader reader = new BufferedReader(new FileReader(fileName))) {
+			List<String[]> list = new ArrayList<>();
+			String line = "";
+			while ((line = reader.readLine()) != null) {
+				String[] array = line.split(separator);
+				list.add(array);
+			}
+			return list;
+		} catch (IOException e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+}

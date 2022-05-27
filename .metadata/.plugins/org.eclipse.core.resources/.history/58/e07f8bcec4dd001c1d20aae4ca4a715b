@@ -1,0 +1,10 @@
+
+public class CSVFilesRunnerClass {
+
+	public static void main(String[] args) {
+
+		String inputFiles[] = { "C:\\Users\\robin\\Documents\\Assessment\\data\\factbook.csv",
+				"C:\\Users\\robin\\Documents\\Assessment\\data\\factbook-2.csv" };
+	}
+
+}

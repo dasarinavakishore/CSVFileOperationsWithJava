@@ -1,0 +1,44 @@
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.HashSet;
+import java.util.Scanner;
+
+public class ReadCSVFile2 {
+	public static void main(String[] args) throws Exception {
+//		Scanner sc = new Scanner(new File("C:\\Users\\robin\\Documents\\Assessment\\data\\factbook-2.csv"));// "C:\\Users\\robin\\Documents\\Assessment\\data\\factbook.csv"
+//		sc.useDelimiter(";"); // sets the delimiter pattern
+
+		String csvFile = "C:\\Users\\robin\\Documents\\Assessment\\data\\factbook-2.csv";
+		BufferedReader br = null;
+		String line = "";
+		HashSet<String> lines = new HashSet<>();
+		try {
+			br = new BufferedReader(new FileReader(csvFile));
+			while ((line = br.readLine()) != null) {
+				if (lines.add(line)) {
+//		                System.out.println(line);
+				}
+			}
+
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} finally {
+			if (br != null) {
+				try {
+					br.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+		
+		System.out.println("-->"+lines);
+
+	}
+}

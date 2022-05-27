@@ -1,0 +1,102 @@
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.Iterator;
+import java.util.LinkedHashSet;
+
+public class ReadWriteCSVFileAndRemoveDuplicates {
+	public static void main(String[] args) {
+
+		String files[] = { "C:\\Users\\robin\\Documents\\Assessment\\data\\factbook.csv",
+				"C:\\Users\\robin\\Documents\\Assessment\\data\\factbook-2.csv" };
+
+		BufferedReader reader = null;
+		String eachRow = "";
+
+		LinkedHashSet<String> finalCsvList = new LinkedHashSet<>();
+
+		for (int i = 0; i < files.length; i++) {
+			String csv_file = files[i];
+
+			try {
+				reader = new BufferedReader(new FileReader(csv_file));
+				if (i == 1) {
+					if ((eachRow = reader.readLine()) != null) {
+						// this condition is to ignore header in 2nd file
+					}
+				}
+
+				while ((eachRow = reader.readLine()) != null) {
+					if (finalCsvList.add(eachRow)) {
+						// System.out.println("Processed line: " + eachLine);
+					} else if (checkIsNullOrEmpty(eachRow)) {
+						System.out.println("--------------- Skipped line: " + eachRow);
+					}
+				}
+			} catch (FileNotFoundException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			} finally {
+				if (reader != null) {
+					try {
+						reader.close();
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+				}
+			}
+
+		}
+
+		Iterator<String> itr = finalCsvList.iterator();
+		while (itr.hasNext()) {
+			String value = itr.next();
+			if (value.startsWith("String")) {
+				itr.remove();
+			}
+		}
+
+		finalCsvList.forEach(System.out::println);
+
+		ReadWriteCSVFileAndRemoveDuplicates r = new ReadWriteCSVFileAndRemoveDuplicates();
+		String outputFile = "C:\\Users\\robin\\Documents\\Assessment\\data\\out.csv";
+		String seperator = ";";
+		r.writeToCsvFile(finalCsvList, seperator, outputFile);
+
+	}
+
+	// Check if String with spaces is Empty or Null
+	public static boolean checkIsNullOrEmpty(String str) {
+
+		if (str != null && !str.trim().isEmpty())
+			return true;
+		else
+			return false;
+	}
+
+	public void writeToCsvFile(LinkedHashSet<String> finalCsvList, String separator, String fileName) {
+
+		try (FileWriter writer = new FileWriter(fileName)) {
+			Iterator<String> itr = finalCsvList.iterator();
+			while (itr.hasNext()) {
+				String[] strings = itr.next().split(";");
+				for (int i = 0; i < strings.length; i++) {
+					writer.append(strings[i]);
+					if (i < (strings.length - 1))
+						writer.append(separator);
+				}
+				writer.append(System.lineSeparator());
+
+			}
+			writer.flush();
+
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+	}
+
+}

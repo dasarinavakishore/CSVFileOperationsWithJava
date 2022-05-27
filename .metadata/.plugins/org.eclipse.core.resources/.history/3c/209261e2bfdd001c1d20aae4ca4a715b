@@ -1,0 +1,142 @@
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.TreeSet;
+
+public class ReadCSVFileAndCalculateAverages {
+	public static void main(String[] args) {
+
+		String csvTempFile = "C:\\Users\\robin\\Documents\\Assessment\\temp\\temp.csv";
+
+		BufferedReader reader = null;
+		String eachRow = "";
+
+		TreeSet<String> csvRows = new TreeSet<String>();
+		LinkedHashSet<String[]> list = new LinkedHashSet<String[]>();
+		String headers[] = null;
+
+		List<String[]> finalList = new ArrayList<String[]>();
+
+		try {
+			reader = new BufferedReader(new FileReader(csvTempFile));
+
+			if ((eachRow = reader.readLine()) != null) {
+				// this condition is for header
+				headers = eachRow.split(",");
+			}
+
+			while ((eachRow = reader.readLine()) != null) {
+				if (csvRows.add(eachRow)) {
+					// if the row is added only once to list then no duplicate,,else duplicate row
+//					System.out.println(Arrays.toString(eachRow.split(";")));
+				} else if (checkIsNullOrEmpty(eachRow)) {
+					System.out.println("-------duplicate row--------" + eachRow);
+				}
+			}
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} finally {
+			if (reader != null) {
+				try {
+					reader.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+
+		Iterator<String> itr = csvRows.iterator();
+		while (itr.hasNext()) {
+			list.add(itr.next().split(","));
+		}
+
+		// countries start with 'A'
+		LinkedHashSet<String[]> countryALetterlist = new LinkedHashSet<String[]>();
+		Iterator<String[]> tt = list.iterator();
+		while (tt.hasNext()) {
+			String[] strArr = tt.next();
+			if (strArr[0].startsWith("A")) {
+				countryALetterlist.add(strArr);
+				System.out.println("--start A letter countries-->" + Arrays.toString(strArr));
+			}
+		}
+
+		// calculating averages
+		int allCountriesCount = list.size();
+		String[] averages = new String[headers.length];
+
+		for (int i = 1; i < headers.length - 1; i++) {
+			float sum = 0;
+			Iterator<String[]> it = list.iterator();
+			while (it.hasNext()) {
+				String[] s = it.next();
+				for (int j = i; j <= i; j++) {
+					if (s[j] != null && !s[j].isEmpty())
+						sum += Float.parseFloat(s[j]);
+				}
+			}
+			float avg = sum / allCountriesCount;
+			averages[i] = avg + "";
+		}
+
+		// adding last column avg..(due to missing in above logic)
+		float sum = 0;
+		Iterator<String[]> it = list.iterator();
+		while (it.hasNext()) {
+			String[] s = it.next();
+			if (s[s.length - 1] != null && !s[s.length - 1].isEmpty())
+				sum += Float.parseFloat(s[s.length - 1]);
+		}
+		float avg = sum / allCountriesCount;
+		averages[headers.length - 1] = avg + "";
+
+		averages[0] = "All Countries Averages";
+		finalList.add(0, headers);
+		finalList.add(1, averages);
+
+//		Iterator<String[]> itrator = finalList.iterator();
+//		while (itrator.hasNext()) {
+//			System.out.println(Arrays.toString(itrator.next()));
+//		}
+
+		ReadCSVFileAndCalculateAverages r = new ReadCSVFileAndCalculateAverages();
+		String outputFile = "C:\\Users\\robin\\Documents\\Assessment\\output\\output.csv";
+		String seperator = ",";
+		r.writeToCsvFile(finalList, seperator, outputFile);
+
+	}
+
+	// Check if String with spaces is Empty or Null
+	public static boolean checkIsNullOrEmpty(String str) {
+
+		if (str != null && !str.trim().isEmpty())
+			return true;
+		else
+			return false;
+	}
+
+	public void writeToCsvFile(List<String[]> thingsToWrite, String separator, String fileName) {
+		try (FileWriter writer = new FileWriter(fileName)) {
+			for (String[] strings : thingsToWrite) {
+				for (int i = 0; i < strings.length; i++) {
+					writer.append(strings[i]);
+					if (i < (strings.length - 1))
+						writer.append(separator);
+				}
+				writer.append(System.lineSeparator());
+			}
+			writer.flush();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+}
